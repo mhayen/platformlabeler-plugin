@@ -288,6 +288,6 @@ class PlatformDetailsTask implements Callable<HashSet<String>, IOException> {
     } catch (IOException notFound) {
       // Ignore IOException
     }
-    return value;
+    return PREFERRED_LINUX_OS_NAMES.getOrDefault(value, value);
   }
 }
