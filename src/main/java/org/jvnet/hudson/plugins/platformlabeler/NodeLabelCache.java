@@ -119,7 +119,7 @@ public class NodeLabelCache extends ComputerListener {
    * @throws InterruptedException on thread interruption
    */
   @NonNull
-  PlatformDetails requestComputerPlatformDetails(final Computer computer)
+  private PlatformDetails requestComputerPlatformDetails(final Computer computer)
       throws IOException, InterruptedException {
     final VirtualChannel channel = computer.getChannel();
     if (null == channel) {
