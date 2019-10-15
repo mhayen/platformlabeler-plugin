@@ -19,15 +19,6 @@ for os_release in $(find * -type f -name os-release); do
         if [ "$image" == "amzn" ]; then
                 image="amazonlinux"
         fi
-         if [ "$image" == "scientific" ]; then
-                image="sl"
-                if [ "$version" == "6.10" ]; then
-                	version="6"
-                fi
-                if [ "$version" == "7.7" ]; then
-                	version="7"
-                fi                
-        fi    
         echo parent=$parent version=$version image=$image
         (cd $parent && docker run -t $image:$version cat /etc/os-release | tr -d '\015' > os-release)
 done

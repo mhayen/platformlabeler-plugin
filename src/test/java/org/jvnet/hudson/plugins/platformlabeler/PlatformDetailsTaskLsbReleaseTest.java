@@ -100,8 +100,8 @@ public class PlatformDetailsTaskLsbReleaseTest {
       return "Ubuntu";
     }
     if (filename.contains("scientific")) {
-      return "Scientific";
-    }
+        return "Scientific";
+    }   
     return filename.toLowerCase();
   }
 
