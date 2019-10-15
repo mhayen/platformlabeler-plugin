@@ -45,6 +45,7 @@ public class PlatformDetailsTaskRedhatReleaseTest {
     Set<String> fileNames = reflections.getResources(Pattern.compile(".*redhat-release"));
     Collection<Object[]> data = new ArrayList<>(fileNames.size());
     for (String fileName : fileNames) {
+      System.out.println(fileName);
       String oneExpectedName = computeExpectedName(fileName);
       String oneExpectedVersion = computeExpectedVersion(fileName);
       String oneExpectedArch = "amd64";
@@ -83,7 +84,8 @@ public class PlatformDetailsTaskRedhatReleaseTest {
     if (filename.contains("scientific")) {
       return "Scientific Linux";
     }
-    return filename.toLowerCase();
+    System.out.println(filename);
+    return null;
   }
 
   private static String computeExpectedVersion(String filename) {
