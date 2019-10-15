@@ -1,15 +1,13 @@
 package org.jvnet.hudson.plugins.platformlabeler;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,42 +22,41 @@ public class PlatformDetailsTaskTest {
 
   @Test
   public void testCall() throws Exception {
-    PlatformDetails details = platformDetailsTask.call();
+    Set<String> details = platformDetailsTask.call();
     if (isWindows()) {
-      assertThat(details.getName(), equalTo("windows"));
+      assertThat(details, hasItems("windows"));
     } else {
-      assertThat(details.getName(), not(equalTo("windows")));
+      assertThat(details, not(hasItems("windows")));
     }
     assertPlatformDetails(details);
   }
 
-  private void assertPlatformDetails(PlatformDetails details) {
+  private void assertPlatformDetails(Set<String> details) {
     String osName = System.getProperty("os.name", "os.name.is.unknown");
     if (osName.toLowerCase().startsWith("linux")) {
-      String name = details.getName();
-      assertThat(name, not(equalTo("windows")));
-      assertThat(name, not(equalTo("linux")));
-      assertThat(name, not(equalTo("Linux")));
+      assertThat(details, not(hasItems("windows")));
+      assertThat(details, not(hasItems("linux")));
+      assertThat(details, not(hasItems("Linux")));
       assertThat(
-          name,
+          details,
           anyOf(
-              equalTo("Alpine"),
-              equalTo("Amazon"),
-              equalTo("AmazonAMI"),
-              equalTo("Debian"),
-              equalTo("CentOS"),
-              equalTo("Ubuntu")));
+              hasItems("Alpine"),
+              hasItems("Amazon"),
+              hasItems("AmazonAMI"),
+              hasItems("Debian"),
+              hasItems("CentOS"),
+              hasItems("Ubuntu")));
       // Yes, this is a dirty trick to detect the hardware architecture on some JVM's
       String expectedArch =
           System.getProperty("sun.arch.data.model", "23").equals("32") ? "x86" : "amd64";
       // Assumes tests run in JVM that matches operating system
-      assertThat(details.getArchitecture(), equalTo(expectedArch));
+      assertThat(details, hasItems(expectedArch));
     }
   }
 
   @Test
   public void testComputeLabelsLinux32Bit() throws Exception {
-    PlatformDetails details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
     assertPlatformDetails(details);
   }
 
@@ -68,15 +65,16 @@ public class PlatformDetailsTaskTest {
     assumeTrue(!isWindows() && Files.exists(Paths.get("/etc/os-release")));
     String unknown = PlatformDetailsTask.UNKNOWN_VALUE_STRING;
     LsbRelease release = new LsbRelease(unknown, unknown);
-    PlatformDetails details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy", release);
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy", release);
     assertPlatformDetails(details);
   }
 
-  @Test()
+  @Test
   public void testComputeLabelsLinuxWithNullLsbRelease() throws Exception {
     assumeTrue(!isWindows() && Files.exists(Paths.get("/etc/os-release")));
+    String unknown = PlatformDetailsTask.UNKNOWN_VALUE_STRING;
     LsbRelease release = null;
-    PlatformDetails details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy", release);
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy", release);
     assertPlatformDetails(details);
   }
 
@@ -93,14 +91,14 @@ public class PlatformDetailsTaskTest {
   @Test
   public void compareOSName() throws Exception {
     assumeTrue(!isWindows() && Files.exists(Paths.get("/etc/os-release")));
-    String details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy").getName();
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
     String name = platformDetailsTask.readReleaseIdentifier("ID");
-    assertThat(details, equalTo(name));
+    assertThat(details, hasItems(name));
   }
 
   @Test
   public void readReleaseIdentifierMissingFileReturnsUnknownValue() throws Exception {
-    PlatformDetails details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
     platformDetailsTask.setOsReleaseFile(new File("/this/file/does/not/exist"));
     String name = platformDetailsTask.readReleaseIdentifier("ID");
     assertThat(name, is(PlatformDetailsTask.UNKNOWN_VALUE_STRING));
@@ -108,7 +106,7 @@ public class PlatformDetailsTaskTest {
 
   @Test
   public void readRedhatReleaseIdentifierMissingFileReturnsUnknownValue() throws Exception {
-    PlatformDetails details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
     platformDetailsTask.setRedhatRelease(new File("/this/file/does/not/exist"));
     String name = platformDetailsTask.readRedhatReleaseIdentifier("ID");
     assertThat(name, is(PlatformDetailsTask.UNKNOWN_VALUE_STRING));
@@ -116,7 +114,7 @@ public class PlatformDetailsTaskTest {
 
   @Test
   public void readRedhatReleaseIdentifierNullFileReturnsUnknownValue() throws Exception {
-    PlatformDetails details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
     platformDetailsTask.setRedhatRelease(null);
     String name = platformDetailsTask.readRedhatReleaseIdentifier("ID");
     assertThat(name, is(PlatformDetailsTask.UNKNOWN_VALUE_STRING));
@@ -124,7 +122,7 @@ public class PlatformDetailsTaskTest {
 
   @Test
   public void readRedhatReleaseIdentifierWrongFileReturnsUnknownValue() throws Exception {
-    PlatformDetails details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
     platformDetailsTask.setRedhatRelease(new File("/etc/hosts")); // Not redhat-release file
     String name = platformDetailsTask.readRedhatReleaseIdentifier("ID");
     assertThat(name, is(PlatformDetailsTask.UNKNOWN_VALUE_STRING));
@@ -133,7 +131,7 @@ public class PlatformDetailsTaskTest {
   @Test
   public void compareOSVersion() throws Exception {
     assumeTrue(!isWindows() && Files.exists(Paths.get("/etc/os-release")));
-    PlatformDetails details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
+    Set<String> details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy");
     String version = platformDetailsTask.readReleaseIdentifier("VERSION_ID");
     /* Check that the version string returned by readReleaseIdentifier
     is at least at the beginning of one of the detail values. Allow
@@ -141,8 +139,10 @@ public class PlatformDetailsTaskTest {
     in the /etc/os-release file without reporting their incremental
     version */
     String foundValue = version;
-    if (details.getVersion().startsWith(version)) {
-      foundValue = details.getVersion();
+    for (String detail : details) {
+      if (detail.startsWith(version)) {
+        foundValue = detail;
+      }
     }
     /* If VERSION_ID has the unknown value then handle it as a special
       case.  Debian testing does not include a VERSION_ID value in
@@ -151,10 +151,9 @@ public class PlatformDetailsTaskTest {
       the VERSION_ID assertion.
     */
     if (version.startsWith("unknown")) {
-      assertThat(details.getName(), equalTo("Debian"));
-      assertThat(details.getVersion(), equalTo("testing"));
+      assertThat(details, hasItems("Debian", "testing"));
     } else {
-      assertThat(details.getVersion(), anyOf(equalTo(version), equalTo(foundValue)));
+      assertThat(details, anyOf(hasItems(version), hasItems(foundValue)));
     }
   }
 
