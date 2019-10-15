@@ -18,32 +18,31 @@ import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
 @RunWith(Parameterized.class)
-public class PlatformDetailsTaskReleaseTest {
+public class PlatformDetailsTaskLinuxTest {
 
-  private final String releaseFileName;
+  private final String osReleaseFileName;
   private final String expectedName;
   private final String expectedVersion;
   private final String expectedArch;
 
-  public PlatformDetailsTaskReleaseTest(
-      String releaseFileName, String expectedName, String expectedVersion, String expectedArch) {
-    this.releaseFileName = releaseFileName;
+  public PlatformDetailsTaskLinuxTest(
+      String osReleaseFileName, String expectedName, String expectedVersion, String expectedArch) {
+    this.osReleaseFileName = osReleaseFileName;
     this.expectedName = expectedName;
     this.expectedVersion = expectedVersion;
     this.expectedArch = expectedArch;
   }
 
   /**
-   * Generate test parameters for Linux os-release and redhat-release sample files stored as
-   * resources.
+   * Generate test parameters for Linux os-release sample files stored as resources.
    *
    * @return parameter values to be tested
    */
   @Parameters(name = "{1}-{2}-{3}")
   public static Collection<Object[]> generateReleaseFileNames() {
-    String packageName = PlatformDetailsTaskReleaseTest.class.getPackage().getName();
+    String packageName = PlatformDetailsTaskLinuxTest.class.getPackage().getName();
     Reflections reflections = new Reflections(packageName, new ResourcesScanner());
-    Set<String> fileNames = reflections.getResources(Pattern.compile(".*-release"));
+    Set<String> fileNames = reflections.getResources(Pattern.compile(".*os-release"));
     Collection<Object[]> data = new ArrayList<>(fileNames.size());
     for (String fileName : fileNames) {
       String oneExpectedName = computeExpectedName(fileName);
@@ -57,13 +56,12 @@ public class PlatformDetailsTaskReleaseTest {
   }
 
   @Test
-  public void testComputeLabelsForRelease() throws Exception {
+  public void testComputeLabelsForOsRelease() throws Exception {
     PlatformDetailsTask details = new PlatformDetailsTask();
-    URL resource = getClass().getResource(releaseFileName);
-    File releaseFile = new File(resource.toURI());
-    assertTrue("File not found " + releaseFile, releaseFile.exists());
-    if (releaseFile.getName().startsWith("redhat")) details.setRedhatRelease(releaseFile);
-    else details.setOsReleaseFile(releaseFile);
+    URL resource = getClass().getResource(osReleaseFileName);
+    File osReleaseFile = new File(resource.toURI());
+    assertTrue("File not found " + osReleaseFile, osReleaseFile.exists());
+    details.setOsReleaseFile(osReleaseFile);
     String unknown = PlatformDetailsTask.UNKNOWN_VALUE_STRING;
     LsbRelease release = new LsbRelease(unknown, unknown);
     HashSet<String> result = details.computeLabels("amd64", "linux", "xyzzy-abc", release);

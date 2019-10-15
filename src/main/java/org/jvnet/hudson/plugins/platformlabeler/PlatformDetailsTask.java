@@ -234,9 +234,6 @@ class PlatformDetailsTask implements Callable<HashSet<String>, IOException> {
     PREFERRED_LINUX_OS_NAMES.put("opensuse", "openSUSE");
     PREFERRED_LINUX_OS_NAMES.put("ubuntu", "Ubuntu");
     PREFERRED_LINUX_OS_NAMES.put("scientific", "Scientific");
-    PREFERRED_LINUX_OS_NAMES.put("Scientific Linux", "Scientific");
-    PREFERRED_LINUX_OS_NAMES.put("Red Hat Enterprise Linux", "rhel");
-    PREFERRED_LINUX_OS_NAMES.put("Red Hat Enterprise Linux Server", "rhel");
   }
 
   private File osRelease = new File("/etc/os-release");
@@ -291,6 +288,6 @@ class PlatformDetailsTask implements Callable<HashSet<String>, IOException> {
     } catch (IOException notFound) {
       // Ignore IOException
     }
-    return PREFERRED_LINUX_OS_NAMES.getOrDefault(value, value);
+    return value;
   }
 }
