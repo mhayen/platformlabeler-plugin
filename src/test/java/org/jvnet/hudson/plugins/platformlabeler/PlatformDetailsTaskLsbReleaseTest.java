@@ -94,7 +94,7 @@ public class PlatformDetailsTaskLsbReleaseTest {
       return "OracleServer";
     }
     if (filename.contains("rhel") || filename.contains("ubi")) {
-      return "RedHatEnterprise";
+      return "rhel";
     }
     if (filename.contains("ubuntu")) {
       return "Ubuntu";
