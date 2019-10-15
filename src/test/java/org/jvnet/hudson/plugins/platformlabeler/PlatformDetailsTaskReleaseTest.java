@@ -62,13 +62,8 @@ public class PlatformDetailsTaskReleaseTest {
     URL resource = getClass().getResource(releaseFileName);
     File releaseFile = new File(resource.toURI());
     assertTrue("File not found " + releaseFile, releaseFile.exists());
-    if (releaseFile.getName().startsWith("redhat")) {
-      details.setOsReleaseFile(null);
-      details.setRedhatRelease(releaseFile);
-    } else {
-      details.setOsReleaseFile(releaseFile);
-      details.setRedhatRelease(null);
-    }
+    if (releaseFile.getName().startsWith("redhat")) details.setRedhatRelease(releaseFile);
+    else details.setOsReleaseFile(releaseFile);
     String unknown = PlatformDetailsTask.UNKNOWN_VALUE_STRING;
     LsbRelease release = new LsbRelease(unknown, unknown);
     HashSet<String> result = details.computeLabels("amd64", "linux", "xyzzy-abc", release);

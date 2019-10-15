@@ -255,9 +255,6 @@ class PlatformDetailsTask implements Callable<HashSet<String>, IOException> {
   @NonNull
   String readReleaseIdentifier(@NonNull String field) {
     String value = UNKNOWN_VALUE_STRING;
-    if (osRelease == null) {
-      return value;
-    }
     try (BufferedReader br =
         new BufferedReader(Files.newBufferedReader(osRelease.toPath(), StandardCharsets.UTF_8))) {
       String line;
@@ -277,9 +274,6 @@ class PlatformDetailsTask implements Callable<HashSet<String>, IOException> {
   @NonNull
   String readRedhatReleaseIdentifier(@NonNull String field) {
     String value = UNKNOWN_VALUE_STRING;
-    if (redhatRelease == null) {
-      return value;
-    }
     try (BufferedReader br =
         new BufferedReader(
             Files.newBufferedReader(redhatRelease.toPath(), StandardCharsets.UTF_8))) {
