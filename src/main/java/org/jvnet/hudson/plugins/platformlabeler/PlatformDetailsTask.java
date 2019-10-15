@@ -287,10 +287,9 @@ class PlatformDetailsTask implements Callable<PlatformDetails, IOException> {
           if (field.equals("ID")) {
             value = line.substring(0, line.indexOf(RELEASE)).trim();
           }
-          if (field.equals("VERSION_ID")) {
+          if (field.equals("VERSION_ID"))
             value =
                 line.substring(line.indexOf(RELEASE) + RELEASE.length(), line.indexOf("(")).trim();
-          }
         }
       }
     } catch (IOException notFound) {
