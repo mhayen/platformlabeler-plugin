@@ -15,7 +15,6 @@ public class PlatformLabelerGlobalConfiguration extends GlobalConfiguration {
 
   private LabelConfig labelConfig;
 
-  /** Standard constructor. */
   public PlatformLabelerGlobalConfiguration() {
     load();
     if (labelConfig == null) {
