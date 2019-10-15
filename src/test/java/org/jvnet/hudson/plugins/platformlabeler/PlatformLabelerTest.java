@@ -23,7 +23,7 @@
  */
 package org.jvnet.hudson.plugins.platformlabeler;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import hudson.model.labels.LabelAtom;
 import java.util.Collection;

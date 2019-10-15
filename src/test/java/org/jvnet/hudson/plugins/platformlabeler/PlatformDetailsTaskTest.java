@@ -1,8 +1,11 @@
 package org.jvnet.hudson.plugins.platformlabeler;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -23,9 +26,9 @@ public class PlatformDetailsTaskTest {
   public void testCall() throws Exception {
     PlatformDetails details = platformDetailsTask.call();
     if (isWindows()) {
-      assertThat(details.getName(), is("windows"));
+      assertThat(details.getName(), equalTo("windows"));
     } else {
-      assertThat(details.getName(), is(not("windows")));
+      assertThat(details.getName(), not(equalTo("windows")));
     }
     assertPlatformDetails(details);
   }
@@ -34,23 +37,23 @@ public class PlatformDetailsTaskTest {
     String osName = System.getProperty("os.name", "os.name.is.unknown");
     if (osName.toLowerCase().startsWith("linux")) {
       String name = details.getName();
-      assertThat(name, is(not("windows")));
-      assertThat(name, is(not("linux")));
-      assertThat(name, is(not("Linux")));
+      assertThat(name, not(equalTo("windows")));
+      assertThat(name, not(equalTo("linux")));
+      assertThat(name, not(equalTo("Linux")));
       assertThat(
           name,
           anyOf(
-              is("Alpine"),
-              is("Amazon"),
-              is("AmazonAMI"),
-              is("Debian"),
-              is("CentOS"),
-              is("Ubuntu")));
+              equalTo("Alpine"),
+              equalTo("Amazon"),
+              equalTo("AmazonAMI"),
+              equalTo("Debian"),
+              equalTo("CentOS"),
+              equalTo("Ubuntu")));
       // Yes, this is a dirty trick to detect the hardware architecture on some JVM's
       String expectedArch =
           System.getProperty("sun.arch.data.model", "23").equals("32") ? "x86" : "amd64";
       // Assumes tests run in JVM that matches operating system
-      assertThat(details.getArchitecture(), is(expectedArch));
+      assertThat(details.getArchitecture(), equalTo(expectedArch));
     }
   }
 
@@ -69,7 +72,7 @@ public class PlatformDetailsTaskTest {
     assertPlatformDetails(details);
   }
 
-  @Test
+  @Test()
   public void testComputeLabelsLinuxWithNullLsbRelease() throws Exception {
     assumeTrue(!isWindows() && Files.exists(Paths.get("/etc/os-release")));
     LsbRelease release = null;
@@ -92,7 +95,7 @@ public class PlatformDetailsTaskTest {
     assumeTrue(!isWindows() && Files.exists(Paths.get("/etc/os-release")));
     String details = platformDetailsTask.computeLabels("x86", "linux", "xyzzy").getName();
     String name = platformDetailsTask.readReleaseIdentifier("ID");
-    assertThat(details, is(name));
+    assertThat(details, equalTo(name));
   }
 
   @Test
@@ -148,10 +151,10 @@ public class PlatformDetailsTaskTest {
       the VERSION_ID assertion.
     */
     if (version.startsWith("unknown")) {
-      assertThat(details.getName(), is("Debian"));
-      assertThat(details.getVersion(), is("testing"));
+      assertThat(details.getName(), equalTo("Debian"));
+      assertThat(details.getVersion(), equalTo("testing"));
     } else {
-      assertThat(details.getVersion(), anyOf(is(version), is(foundValue)));
+      assertThat(details.getVersion(), anyOf(equalTo(version), equalTo(foundValue)));
     }
   }
 

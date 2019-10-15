@@ -1,7 +1,8 @@
 package org.jvnet.hudson.plugins.platformlabeler;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -71,14 +72,14 @@ public class PlatformDetailsTaskReleaseTest {
     String unknown = PlatformDetailsTask.UNKNOWN_VALUE_STRING;
     LsbRelease release = new LsbRelease(unknown, unknown);
     PlatformDetails result = details.computeLabels("amd64", "linux", "xyzzy-abc", release);
-    assertThat(result.getName(), is(expectedName));
-    assertThat(result.getArchitecture(), is(expectedArch));
-    assertThat(result.getVersion(), is(expectedVersion));
-    assertThat(result.getArchitectureName(), is(expectedArch + "-" + expectedName));
+    assertThat(result.getName(), equalTo(expectedName));
+    assertThat(result.getArchitecture(), equalTo(expectedArch));
+    assertThat(result.getVersion(), equalTo(expectedVersion));
+    assertThat(result.getArchitectureName(), equalTo(expectedArch + "-" + expectedName));
     assertThat(
         result.getArchitectureNameVersion(),
-        is(expectedArch + "-" + expectedName + "-" + expectedVersion));
-    assertThat(result.getNameVersion(), is(expectedName + "-" + expectedVersion));
+        equalTo(expectedArch + "-" + expectedName + "-" + expectedVersion));
+    assertThat(result.getNameVersion(), equalTo(expectedName + "-" + expectedVersion));
   }
 
   private static String computeExpectedName(String filename) {
